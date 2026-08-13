@@ -1,0 +1,256 @@
+import { useState, useId, useRef, useEffect, useCallback } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
+import ChatBackdrop from './ChatBackdrop.jsx';
+import ChatNav from './ChatNav.jsx';
+import ChatMessage from './ChatMessage.jsx';
+import { streamReply } from '../lib/chat.js';
+import { MAP_SECTIONS } from '../data/productMap.js';
+
+const itemLabel = (item) => (typeof item === 'string' ? item : item.label);
+const itemMeta = (item) => (typeof item === 'string' ? null : item.meta);
+
+/**
+ * The chat surface, from "AI chat area - *.svg": the category list on the
+ * left, a translucent panel on the right with the composer pinned to its
+ * foot, and the brand glow washing through from behind.
+ *
+ * The export is a 1440x1024 mock of an application screen rather than a
+ * poster, so this reflows instead of letterboxing — the design's proportions
+ * (360px list, 27px panel radius, 56px composer) are the desktop baseline and
+ * the list collapses behind the nav's menu button on narrow viewports.
+ *
+ * Answers come from B.L.A.Y.N.E. via /api/chat, which holds the Anthropic key
+ * server-side and streams the reply back (see server/index.js).
+ */
+export default function ChatPage() {
+  const { category } = useParams();
+  const section = MAP_SECTIONS.find((s) => s.id === category);
+
+  const [selected, setSelected] = useState(null);
+  const [prompt, setPrompt] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [streaming, setStreaming] = useState(false);
+  const [error, setError] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const inputId = useId();
+  const abortRef = useRef(null);
+  const scrollRef = useRef(null);
+
+  // Follow the answer as it streams in.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages]);
+
+  // Drop any in-flight request when the view changes or unmounts.
+  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(() => {
+    abortRef.current?.abort();
+    setMessages([]);
+    setSelected(null);
+    setError(null);
+    setStreaming(false);
+  }, [category]);
+
+  const send = useCallback(
+    async (text, topic) => {
+      const history = [...messages, { role: 'user', content: text, topic }];
+      setMessages([...history, { role: 'assistant', content: '' }]);
+      setStreaming(true);
+      setError(null);
+
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      const append = (chunk) =>
+        setMessages((prev) => {
+          const next = [...prev];
+          const last = next[next.length - 1];
+          next[next.length - 1] = { ...last, content: last.content + chunk };
+          return next;
+        });
+
+      try {
+        const { refused } = await streamReply({
+          category,
+          topic,
+          messages: history.map(({ role, content }) => ({ role, content })),
+          signal: controller.signal,
+          onText: append,
+        });
+        if (refused) append(refused);
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          // Drop the empty assistant turn the user cancelled.
+          setMessages((prev) =>
+            prev[prev.length - 1]?.content ? prev : prev.slice(0, -1),
+          );
+        } else {
+          setError(err.message);
+          setMessages((prev) => prev.slice(0, -1));
+        }
+      } finally {
+        setStreaming(false);
+        abortRef.current = null;
+      }
+    },
+    [category, messages],
+  );
+
+  if (!section) return <Navigate to="/features" replace />;
+
+  const submit = (e) => {
+    e.preventDefault();
+    const text = prompt.trim();
+    if (!text || streaming) return;
+    setPrompt('');
+    send(text, selected);
+  };
+
+  return (
+    <div className="relative flex min-h-svh flex-col bg-delft">
+      <ChatBackdrop
+        className="pointer-events-none fixed inset-0 h-full w-full"
+        preserveAspectRatio="xMidYMid slice"
+      />
+
+      <div className="relative mx-auto flex min-h-svh w-full max-w-[1440px] flex-col">
+        <ChatNav
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen((v) => !v)}
+        />
+
+        {/*
+          Body insets follow the export at 1440: list text at x=72, panel from
+          x=508 to x=1358, 55px below the header rule, 48px clear of the foot.
+        */}
+        <div className="flex min-h-0 flex-1 gap-6 px-5 pt-6 pb-8 sm:px-8 lg:gap-[76px] lg:pt-[55px] lg:pr-[5.7%] lg:pb-12 lg:pl-[5%]">
+          {/* ------------------------- category list ------------------------- */}
+          <aside
+            id="chat-sidebar"
+            aria-label={`${section.title} list`}
+            className={`${
+              sidebarOpen ? 'flex' : 'hidden'
+            } absolute inset-x-5 top-20 z-10 max-h-[70svh] flex-col overflow-y-auto rounded-2xl bg-delft/95 p-4 shadow-2xl ring-1 ring-jordy/20 md:static md:z-auto md:flex md:max-h-none md:w-[360px] md:shrink-0 md:bg-transparent md:p-0 md:shadow-none md:ring-0`}
+          >
+            <h1 className="sr-only">{section.title}</h1>
+            <ul className="m-0 flex list-none flex-col gap-px p-0 md:gap-0">
+              {section.items.map((item) => {
+                const label = itemLabel(item);
+                const meta = itemMeta(item);
+                const active = selected === label;
+                return (
+                  <li key={label}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelected(active ? null : label);
+                        setSidebarOpen(false);
+                      }}
+                      aria-pressed={active}
+                      className={`w-full cursor-pointer rounded-lg border-0 bg-transparent px-3 py-2 text-left text-[15.5px] tracking-[0.048em] transition-colors focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none md:px-2 md:py-[6px] ${
+                        active
+                          ? 'bg-jordy/20 text-white'
+                          : 'text-platinum/85 hover:bg-jordy/10 hover:text-platinum'
+                      }`}
+                    >
+                      {label}
+                      {meta && (
+                        <span className="mt-0.5 block text-xs tracking-normal text-platinum/50">
+                          {meta}
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
+
+          {/* ----------------------------- panel ----------------------------- */}
+          <section
+            aria-label="Conversation"
+            className="flex min-h-0 min-w-0 flex-1 flex-col rounded-[27px] bg-platinum/20 p-5 sm:p-8"
+          >
+            <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
+              {messages.length === 0 ? (
+                <p className="m-0 max-w-md text-sm leading-relaxed text-platinum/55">
+                  {selected
+                    ? `${selected} selected. Add a prompt below to brief B.L.A.Y.N.E.`
+                    : `Pick from the ${section.title.toLowerCase()} list, or type a prompt straight into the composer.`}
+                </p>
+              ) : (
+                <ul
+                  aria-live="polite"
+                  aria-busy={streaming}
+                  className="m-0 flex list-none flex-col gap-6 p-0"
+                >
+                  {messages.map((m, i) => (
+                    <ChatMessage
+                      key={i}
+                      role={m.role}
+                      topic={m.topic}
+                      content={m.content}
+                      pending={streaming && i === messages.length - 1}
+                    />
+                  ))}
+                </ul>
+              )}
+
+              {error && (
+                <p
+                  role="alert"
+                  className="mt-4 mb-0 rounded-xl bg-poppy/15 px-4 py-3 text-sm text-platinum"
+                >
+                  {error}
+                </p>
+              )}
+            </div>
+
+            <form onSubmit={submit} className="mt-6 shrink-0">
+              <label htmlFor={inputId} className="mb-3 block text-[15.5px] text-platinum/75">
+                {selected
+                  ? `Briefing B.L.A.Y.N.E on ${selected}`
+                  : 'Select a feature from the left or input your prompt here'}
+              </label>
+
+              <div className="flex items-center gap-3 rounded-[13px] bg-delft py-2 pr-2 pl-5">
+                <input
+                  id={inputId}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  disabled={streaming}
+                  placeholder="Type in your prompt, I'll do the heavy work."
+                  className="min-w-0 flex-1 border-0 bg-transparent py-2 text-[15.5px] text-platinum placeholder:text-platinum/45 focus:outline-none disabled:opacity-60"
+                />
+                {streaming ? (
+                  <button
+                    type="button"
+                    onClick={() => abortRef.current?.abort()}
+                    aria-label="Stop generating"
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent text-white transition-colors hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+                  >
+                    <span className="block h-3 w-3 rounded-[2px] bg-current" />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    aria-label="Send prompt"
+                    className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border-0 bg-transparent text-white transition-colors hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                      <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M9 1v16M17 9H1" />
+                      </g>
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
