@@ -10,7 +10,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "extract:hero": "node scripts/extract-hero-svg.mjs",
-    "extract:hero:audit": "node scripts/extract-hero-svg.mjs --audit"
+    "extract:hero:audit": "node scripts/extract-hero-svg.mjs --audit",
+    "skills:upload": "node --env-file-if-exists=.env scripts/upload-skills.mjs",
+    "skills:list": "node --env-file-if-exists=.env scripts/upload-skills.mjs --list"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

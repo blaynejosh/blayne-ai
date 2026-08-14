@@ -5,10 +5,19 @@ node_modules
 dist
 .vite
 
-# secrets — never commit a real key
+# secrets — never commit a real key.
+# Catches .env, .env.local, .env.production, etc. The negation keeps the
+# committed template visible; do not remove it.
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+
+# other credential shapes
+*.pem
+*.key
+secrets.json
+.anthropic
+
 
 # local tooling state (contains machine-specific absolute paths)
 .claude/settings.local.json
