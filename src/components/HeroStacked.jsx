@@ -31,7 +31,7 @@ export default function HeroStacked() {
         <Link
           to="/"
           aria-label="BLAYNE home"
-          className="transition-opacity duration-200 hover:opacity-80"
+          className="pressable transition-opacity duration-200 hover:opacity-80"
         >
           <BlayneMark className="h-11 w-11" />
         </Link>
@@ -39,7 +39,7 @@ export default function HeroStacked() {
         <Link
           to="/features"
           aria-label="Search the Product Map"
-          className="flex items-center gap-3 rounded-full bg-white/20 px-4 py-2.5 text-sm text-platinum no-underline transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+          className="pressable material-chip flex items-center gap-3 rounded-full bg-white/20 px-4 py-2.5 text-sm text-platinum no-underline transition-colors hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
         >
           <span className="h-2.5 w-2.5 rounded-full bg-jordy" />
           Search
@@ -62,9 +62,9 @@ export default function HeroStacked() {
             <Link
               to={node.to}
               aria-label={`Explore ${node.label.toLowerCase()}`}
-              className="group flex items-center gap-4 rounded-2xl bg-jordy/15 px-5 py-4 no-underline transition-colors hover:bg-jordy/25 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+              className="group pressable flex items-center gap-4 rounded-2xl bg-jordy/15 px-5 py-4 no-underline transition-colors hover:bg-jordy/25 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
             >
-              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-jordy transition-transform group-hover:scale-125" />
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-jordy transition-transform motion-safe:group-hover:scale-125" />
               <span className="min-w-0">
                 <span className="block text-sm tracking-[0.055em] text-platinum">
                   {node.label}
@@ -75,7 +75,7 @@ export default function HeroStacked() {
               </span>
               <span
                 aria-hidden="true"
-                className="ml-auto shrink-0 text-platinum/50 transition-transform group-hover:translate-x-0.5"
+                className="ml-auto shrink-0 text-platinum/50 transition-transform motion-safe:group-hover:translate-x-0.5"
               >
                 →
               </span>

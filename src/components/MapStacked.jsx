@@ -32,7 +32,7 @@ export default function MapStacked({ id, title, intro, items }) {
 
         <Link
           to={`/${id}`}
-          className="mt-5 inline-flex items-center gap-2 rounded-full bg-jordy/15 px-4 py-2 text-sm text-platinum no-underline transition-colors hover:bg-jordy/25 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+          className="pressable mt-5 inline-flex items-center gap-2 rounded-full bg-jordy/15 px-4 py-2 text-sm text-platinum no-underline transition-colors hover:bg-jordy/25 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
         >
           Open in BLAYNE
           <span aria-hidden="true">&rarr;</span>

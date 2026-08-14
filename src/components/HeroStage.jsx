@@ -35,7 +35,7 @@ export default function HeroStage() {
         to="/"
         aria-label="BLAYNE home"
         style={box(215, 40, 47, 50)}
-        className="absolute transition-opacity duration-200 hover:opacity-80"
+        className="pressable absolute transition-opacity duration-200 hover:opacity-80"
       >
         <BlayneMark className="h-full w-full" />
       </Link>

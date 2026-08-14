@@ -66,13 +66,13 @@ export default function UspSection() {
         <div className="mt-12 flex flex-wrap items-center gap-4">
           <Link
             to="/features"
-            className="rounded-full bg-jordy px-7 py-3.5 text-[15.5px] tracking-[0.02em] text-delft no-underline transition-colors hover:bg-jordy/85 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:ring-offset-2 focus-visible:ring-offset-delft focus-visible:outline-none"
+            className="pressable rounded-full bg-jordy px-7 py-3.5 text-[15.5px] tracking-[0.02em] text-delft no-underline transition-colors hover:bg-jordy/85 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:ring-offset-2 focus-visible:ring-offset-delft focus-visible:outline-none"
           >
             Start a session
           </Link>
           <a
             href="#features"
-            className="rounded-full px-7 py-3.5 text-[15.5px] tracking-[0.02em] text-platinum no-underline ring-1 ring-jordy/40 transition-colors hover:bg-jordy/10 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+            className="pressable rounded-full px-7 py-3.5 text-[15.5px] tracking-[0.02em] text-platinum no-underline ring-1 ring-jordy/40 transition-colors hover:bg-jordy/10 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
           >
             See the map
           </a>

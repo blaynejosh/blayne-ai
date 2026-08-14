@@ -80,12 +80,12 @@ export default function ChatMessage({ role, topic, content, pending }) {
           <Markdown components={MD}>{content}</Markdown>
         ) : (
           <span className="flex items-center gap-2 text-platinum/50">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-jordy" />
+            <span className="h-1.5 w-1.5 rounded-full bg-jordy motion-safe:animate-pulse" />
             Thinking…
           </span>
         )}
         {pending && content && (
-          <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-jordy" />
+          <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 bg-jordy motion-safe:animate-pulse" />
         )}
       </div>
     </li>

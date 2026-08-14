@@ -22,7 +22,7 @@ export default function SiteFooter() {
             <Link
               to="/"
               aria-label="BLAYNE home"
-              className="inline-flex items-center gap-3 no-underline transition-opacity hover:opacity-80"
+              className="pressable inline-flex items-center gap-3 no-underline transition-opacity hover:opacity-80"
             >
               <BlayneMark className="h-10 w-10" />
               <span className="text-[15.5px] tracking-[0.02em] text-platinum">
@@ -47,7 +47,7 @@ export default function SiteFooter() {
                 <li key={s.id}>
                   <Link
                     to={`/${s.id}`}
-                    className="text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
+                    className="pressable-text text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
                   >
                     {s.title}
                   </Link>
@@ -70,14 +70,14 @@ export default function SiteFooter() {
                   {l.to ? (
                     <Link
                       to={l.to}
-                      className="text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
+                      className="pressable-text text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
                     >
                       {l.label}
                     </Link>
                   ) : (
                     <a
                       href={l.href}
-                      className="text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
+                      className="pressable-text text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
                     >
                       {l.label}
                     </a>
@@ -96,7 +96,7 @@ export default function SiteFooter() {
               <li>
                 <a
                   href={`mailto:${EMAIL}`}
-                  className="text-sm break-all text-platinum/75 no-underline transition-colors hover:text-platinum"
+                  className="pressable-text text-sm break-all text-platinum/75 no-underline transition-colors hover:text-platinum"
                 >
                   {EMAIL}
                 </a>
@@ -104,7 +104,7 @@ export default function SiteFooter() {
               <li>
                 <a
                   href={`https://${SITE}`}
-                  className="text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
+                  className="pressable-text text-sm text-platinum/75 no-underline transition-colors hover:text-platinum"
                 >
                   {SITE}
                 </a>

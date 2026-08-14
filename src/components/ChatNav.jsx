@@ -22,7 +22,7 @@ export default function ChatNav({ onToggleSidebar, sidebarOpen }) {
         <Link
           to="/"
           aria-label="BLAYNE home"
-          className="shrink-0 py-3 transition-opacity hover:opacity-80"
+          className="pressable shrink-0 py-3 transition-opacity hover:opacity-80"
         >
           <BlayneMark className="h-11 w-11" />
         </Link>
@@ -33,7 +33,7 @@ export default function ChatNav({ onToggleSidebar, sidebarOpen }) {
           aria-expanded={sidebarOpen}
           aria-controls="chat-sidebar"
           aria-label={sidebarOpen ? 'Hide list' : 'Show list'}
-          className="-mx-1 shrink-0 cursor-pointer rounded-md border-0 bg-transparent px-1 py-3 text-platinum transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+          className="pressable -mx-1 shrink-0 cursor-pointer rounded-md border-0 bg-transparent px-1 py-3 text-platinum transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
         >
           <svg width="28" height="20" viewBox="0 0 28 20" aria-hidden="true">
             <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">

@@ -70,10 +70,10 @@ export default function MapStage({ id, title, items, spacing }) {
       <Link
         to={`/${id}`}
         style={ink(TITLE.at.x, 176, ITEM.size, 'mixed')}
-        className="group absolute whitespace-nowrap text-platinum/65 no-underline transition-colors hover:text-platinum focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
+        className="group pressable-text absolute whitespace-nowrap text-platinum/65 no-underline transition-colors hover:text-platinum focus-visible:ring-2 focus-visible:ring-jordy focus-visible:outline-none"
       >
         Open in BLAYNE{' '}
-        <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-0.5">
+        <span aria-hidden="true" className="inline-block transition-transform motion-safe:group-hover:translate-x-0.5">
           &rarr;
         </span>
       </Link>
